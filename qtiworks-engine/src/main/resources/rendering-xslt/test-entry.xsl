@@ -27,6 +27,7 @@ Test Entry page (shown when there are multiple testParts)
       <xsl:if test="@lang">
         <xsl:copy-of select="@lang"/>
         <xsl:attribute name="xml:lang" select="@lang"/>
+        <xsl:if test="@lang='ar'"><xsl:attribute name="dir" select="'rtl'"/></xsl:if>
       </xsl:if>
       <head>
         <title><xsl:value-of select="@title"/></title>

@@ -538,5 +538,14 @@ ul.testPartDrilldown li.currentItem {
   background: url(../../includes/images/information.png) 5px center no-repeat;
 }
 
+/* right to left fix */
+html[dir="rtl"] .assessmentItem .itemStatus {
+  float: left;
+  display: block;
+  padding: 0.3em;
+  border-radius: 0.5em;
+  color: white;
+  font-size: 0.8em;
+}
 
 

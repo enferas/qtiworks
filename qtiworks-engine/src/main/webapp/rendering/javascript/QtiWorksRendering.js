@@ -597,6 +597,48 @@ var QtiWorksRendering = (function() {
         };
     };
     
+    /*************************************************************/
+    /* HotspotInteraction */
+    
+    var HotspotInteraction = function(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue) {
+        this.containerId = containerId;
+        this.responseIdentifier = responseIdentifier;
+        this.maxAssociations = maxAssociations;
+        this.minAssociations = minAssociations;
+        this.width = width;
+        this.height = height;
+        this.image = image;
+        this.hotspots = hotspots;
+        this.responseValue = responseValue;
+        var interaction = this;
+        
+        this.reset = function() { 
+            HotspotCanvas.reset();
+            alert("reset!");
+        };
+        
+        this.syncHiddenFormFields = function() {
+            HotspotCanvas.syncHiddenFormFields();
+        };
+        
+        this.init = function() {
+            HotspotCanvas.initialize(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue);
+            
+            /* Register callback to reset things when requested */
+            registerResetCallback(function() {
+                interaction.reset();
+            });
+            
+            /* Sync selection into hidden form fields on submit */
+            registerSubmitCallback(function() {
+                interaction.syncHiddenFormFields();
+                alert("submited.!");
+            });
+            
+            alert("initialized.!");
+        };
+    };
+    
     /************************************************************/
     /* Public methods */
 
@@ -651,7 +693,11 @@ var QtiWorksRendering = (function() {
         registerGraphicAssociationInteraction: function(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue) {
             new GraphicAssociationInteraction(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue).init();
         },
-
+ 
+        registerHotspotInteraction: function(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue) {
+            new HotspotInteraction(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue).init();
+        },
+        
         registerReadyCallback: function(callback) {
             $(document).ready(function() {
                 if (typeof(MathJax) !== "undefined") {

@@ -6,6 +6,7 @@
  * jquery-ui.js (incl. Draggable, Resizable, Sortable, Dialog, Slider)
  *
  * Author: David McKain
+ * Modifications: Aboud Zakaria
  *
  * Copyright (c) 2012-2013, The University of Edinburgh
  * All Rights Reserved
@@ -454,7 +455,7 @@ var QtiWorksRendering = (function() {
      * (Recall that PositionObjectInteraction currently uses an applet for its stage,
      * so this class needs to be able to associate a single applet with multiple interactions)
      */
-
+    
     var AppletBasedInteractionContainer = function(containerId, responseIdentifiers) {
         this.responseIdentifiers = responseIdentifiers;
         this.divContainerQuery = $('#' + containerId);
@@ -514,6 +515,46 @@ var QtiWorksRendering = (function() {
         };
     };
 
+    /*************************************************************/
+    /* associationInteraction */
+    
+    var AssociationInteraction = function(containerId, responseIdentifier, maxAssociations, minAssociations, choices, responseValue){ 
+        this.containerId = containerId;
+        this.responseIdentifier = responseIdentifier;
+        this.maxAssociations = maxAssociations;
+        this.minAssociations = minAssociations;
+        this.choices_count = choices.length;
+        this.choices = choices;
+        this.responseValue = responseValue;
+        var interaction = this;
+        
+        this.reset = function() { 
+            AssociationCanvas.reset();
+            alert("reset!");
+        };
+        
+        this.syncHiddenFormFields = function() {
+            AssociationCanvas.syncHiddenFormFields();
+        };
+        
+        this.init = function() {
+            AssociationCanvas.initialize(containerId, responseIdentifier, maxAssociations, minAssociations, choices, responseValue);
+        
+            /* Register callback to reset things when requested */
+            registerResetCallback(function() {
+                interaction.reset();
+            });
+            
+            /* Sync selection into hidden form fields on submit */
+            registerSubmitCallback(function() {
+                interaction.syncHiddenFormFields();
+                alert("submited.!");
+            });
+            
+            alert("initialized.!");
+        };
+    };
+    
     /************************************************************/
     /* Public methods */
 
@@ -559,6 +600,10 @@ var QtiWorksRendering = (function() {
 
         registerAppletBasedInteractionContainer: function(containerId, responseIdentifiers) {
             new AppletBasedInteractionContainer(containerId, responseIdentifiers).init();
+        },
+
+        registerAssociationInteraction: function(containerId, responseIdentifier, maxAssociations, minAssociations, choices, responseValue) {
+            new AssociationInteraction(containerId, responseIdentifier, maxAssociations, minAssociations, choices, responseValue).init();
         },
 
         registerReadyCallback: function(callback) {

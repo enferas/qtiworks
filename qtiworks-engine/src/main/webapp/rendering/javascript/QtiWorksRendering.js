@@ -555,6 +555,48 @@ var QtiWorksRendering = (function() {
         };
     };
     
+    /*************************************************************/
+    /* graphicAssociationInteraction */
+    
+    var GraphicAssociationInteraction = function(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue) {
+        this.containerId = containerId;
+        this.responseIdentifier = responseIdentifier;
+        this.maxAssociations = maxAssociations;
+        this.minAssociations = minAssociations;
+        this.width = width;
+        this.height = height;
+        this.image = image;
+        this.hotspots = hotspots;
+        this.responseValue = responseValue;
+        var interaction = this;
+        
+        this.reset = function() { 
+            GraphicAssociationCanvas.reset();
+            alert("reset!");
+        };
+        
+        this.syncHiddenFormFields = function() {
+            GraphicAssociationCanvas.syncHiddenFormFields();
+        };
+        
+        this.init = function() {
+            GraphicAssociationCanvas.initialize(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue);
+            
+            /* Register callback to reset things when requested */
+            registerResetCallback(function() {
+                interaction.reset();
+            });
+            
+            /* Sync selection into hidden form fields on submit */
+            registerSubmitCallback(function() {
+                interaction.syncHiddenFormFields();
+                alert("submited.!");
+            });
+            
+            alert("initialized.!");
+        };
+    };
+    
     /************************************************************/
     /* Public methods */
 
@@ -604,6 +646,10 @@ var QtiWorksRendering = (function() {
 
         registerAssociationInteraction: function(containerId, responseIdentifier, maxAssociations, minAssociations, choices, responseValue) {
             new AssociationInteraction(containerId, responseIdentifier, maxAssociations, minAssociations, choices, responseValue).init();
+        },
+        
+        registerGraphicAssociationInteraction: function(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue) {
+            new GraphicAssociationInteraction(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue).init();
         },
 
         registerReadyCallback: function(callback) {

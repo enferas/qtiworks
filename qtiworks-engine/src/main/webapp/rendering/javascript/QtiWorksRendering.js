@@ -530,7 +530,6 @@ var QtiWorksRendering = (function() {
         
         this.reset = function() { 
             AssociationCanvas.reset();
-            alert("reset!");
         };
         
         this.syncHiddenFormFields = function() {
@@ -548,10 +547,8 @@ var QtiWorksRendering = (function() {
             /* Sync selection into hidden form fields on submit */
             registerSubmitCallback(function() {
                 interaction.syncHiddenFormFields();
-                alert("submited.!");
             });
             
-            alert("initialized.!");
         };
     };
     
@@ -572,7 +569,6 @@ var QtiWorksRendering = (function() {
         
         this.reset = function() { 
             GraphicAssociationCanvas.reset();
-            alert("reset!");
         };
         
         this.syncHiddenFormFields = function() {
@@ -590,10 +586,8 @@ var QtiWorksRendering = (function() {
             /* Sync selection into hidden form fields on submit */
             registerSubmitCallback(function() {
                 interaction.syncHiddenFormFields();
-                alert("submited.!");
             });
             
-            alert("initialized.!");
         };
     };
     
@@ -614,7 +608,6 @@ var QtiWorksRendering = (function() {
         
         this.reset = function() { 
             HotspotCanvas.reset();
-            alert("reset!");
         };
         
         this.syncHiddenFormFields = function() {
@@ -632,10 +625,54 @@ var QtiWorksRendering = (function() {
             /* Sync selection into hidden form fields on submit */
             registerSubmitCallback(function() {
                 interaction.syncHiddenFormFields();
-                alert("submited.!");
             });
             
-            alert("initialized.!");
+        };
+    };
+    
+    /*************************************************************/
+    /* GraphicOrderInteraction */
+    
+    var GraphicOrderInteraction = function(containerId, responseIdentifier, width, height, image, hotspots, responseValue) { 
+        this.containerId = containerId;
+        this.responseIdentifier = responseIdentifier;
+        this.width = width;
+        this.height = height;
+        this.image = image;
+        this.hotspots = hotspots;
+        this.responseValue = responseValue;
+        var interaction = this;
+        
+        this.reset = function() { 
+            GraphicOrderCanvas.reset();
+        };
+        
+        this.syncHiddenFormFields = function() {
+            GraphicOrderCanvas.syncHiddenFormFields();
+        };
+        
+        this.isAllOrderd = function() {
+            return GraphicOrderCanvas.isAllOrderd();
+        }
+        
+        this.init = function() {
+            GraphicOrderCanvas.initialize(containerId, responseIdentifier, width, height, image, hotspots, responseValue);
+            
+            /* Register callback to reset things when requested */
+            registerResetCallback(function() {
+                interaction.reset();
+            });
+            
+            /* Sync selection into hidden form fields on submit */
+            registerSubmitCallback(function() {
+                if (interaction.isAllOrderd()) {
+                    interaction.syncHiddenFormFields();
+                } else {
+                    alert("you must order all the hotspots.");
+                    return false;
+                }
+            });
+            
         };
     };
     
@@ -696,6 +733,10 @@ var QtiWorksRendering = (function() {
  
         registerHotspotInteraction: function(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue) {
             new HotspotInteraction(containerId, responseIdentifier, maxAssociations, minAssociations, width, height, image, hotspots, responseValue).init();
+        },
+        
+        registerGraphicOrderInteraction: function(containerId, responseIdentifier, width, height, image, hotspots, responseValue) {
+            new GraphicOrderInteraction(containerId, responseIdentifier, width, height, image, hotspots, responseValue).init();
         },
         
         registerReadyCallback: function(callback) {

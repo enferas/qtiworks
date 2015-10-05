@@ -21,6 +21,7 @@
       </xsl:if>
 
       <xsl:variable name="object" select="qti:object" as="element(qti:object)"/>
+<!--
       <xsl:variable name="appletContainerId" select="concat('qtiworks_id_appletContainer_', @responseIdentifier)" as="xs:string"/>
       <div id="{$appletContainerId}" class="appletContainer">
         <object type="application/x-java-applet" height="{$object/@height + 40}" width="{$object/@width}">
@@ -58,6 +59,45 @@
           });
         </script>
       </div>
+-->
+      <script src="{$webappContextPath}/lib/easeljs-0.6.1.min.js"/>
+      <script src="{$webappContextPath}/lib/movieclip-0.6.1.min.js"/>
+      <script src="{$webappContextPath}/lib/preloadjs-0.3.1.min.js"/>
+      <script src="{$webappContextPath}/lib/tweenjs-0.4.1.min.js"/>
+      
+      <script src="{$webappContextPath}/rendering/javascript/canvas/canvasUtilities.js"/>
+      <script src="{$webappContextPath}/rendering/javascript/canvas/graphicOrderCanvas.js"/>
+      
+      <xsl:variable name="graphicOrderContainerId" select="concat('qtiworks_id_graphicOrderContainer_', @responseIdentifier)" as="xs:string"/>
+      <div id="{$graphicOrderContainerId}">
+            <xsl:variable name="hotspots" select="qw:filter-visible(qti:hotspotChoice)" as="element(qti:hotspotChoice)*"/>
+            <xsl:variable name="responseValue" select="qw:get-response-value(/, @responseIdentifier)" as="element(qw:responseVariable)?"/>
+            
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    alert('ready, steady!');
+                    var hotspots = [];
+                    <xsl:for-each select="$hotspots">
+                        hotspots.push({ 
+                                            'identifier':   '<xsl:value-of select="@identifier"/>',
+                                            'shape'     :   '<xsl:value-of select="@shape"/>',
+                                            'coords'    :   '<xsl:value-of select="@coords"/>',
+                                            'label'     :   '<xsl:if test="@label"><xsl:value-of select="@label"/></xsl:if>',
+                                            'matchGroup':   '<xsl:if test="@matchGroup"><xsl:value-of select="translate(normalize-space(@matchGroup), ' ', '::')"/></xsl:if>'                    
+                                     });
+                    </xsl:for-each>
+                    QtiWorksRendering.registerGraphicOrderInteraction(
+                        '<xsl:value-of select="$graphicOrderContainerId"/>',
+                        '<xsl:value-of select="@responseIdentifier"/>',
+                        <xsl:value-of select="$object/@width"/>, <xsl:value-of select="$object/@height + 40"/>,
+                        '<xsl:value-of select="qw:convert-link($object/@data)"/>',
+                        hotspots,
+                        '<xsl:if test="qw:is-not-null-value($responseValue)"><xsl:value-of select="$responseValue/qw:value" separator=","/></xsl:if>'
+                    );
+                    
+                });
+            </script> 
+      </div >   
     </div>
   </xsl:template>
 </xsl:stylesheet>
